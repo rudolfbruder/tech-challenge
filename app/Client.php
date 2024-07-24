@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+    //I am a fan of setting $guaded to = [] via stub when making a model by artisan
     protected $fillable = [
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
     ];
