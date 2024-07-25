@@ -27,6 +27,10 @@ class ClientsController extends Controller
     {
         $client = Client::with('bookings')->where('id', $client)->first();
 
+        //I would prefer to create an API response and load it via Vue or make logic on FE in vue with moment js or similar package
+        //this will do for now
+        $client->bookings->each->append('time');
+
         return view('clients.show', ['client' => $client]);
     }
 
