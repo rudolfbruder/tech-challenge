@@ -3,11 +3,13 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+// If you don't need the styles, do not connect
 
 require('./bootstrap');
 
 window.Vue = require('vue');
 
+require('./plugins/swal')
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Http\Requests\ClientDestroyRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,10 +47,10 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(ClientDestroyRequest $request, Client $client)
     {
-        Client::where('id', $client)->delete();
+        $client->delete();
 
-        return 'Deleted';
+        return response()->json([], 204);
     }
 }

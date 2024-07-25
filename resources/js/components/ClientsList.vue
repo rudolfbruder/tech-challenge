@@ -37,11 +37,20 @@ import axios from 'axios';
 export default {
     name: 'ClientsList',
 
-    props: ['clients'],
-
+    props: ['clientsFromTheView'],
+    data(){
+        return {
+            clients: this.clientsFromTheView
+        }
+    },
     methods: {
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+            axios.delete(`/clients/${client.id}`).then(()=>{
+                this.$swalSuccessToast('Client deleted successfully')
+                this.clients = this.clients.filter(tClient => tClient.id != client.id)
+            }).catch((e) => {
+                this.$swalErrorToast('Oooops, there was a problem')
+            });
         }
     }
 }

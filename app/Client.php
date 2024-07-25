@@ -42,4 +42,10 @@ class Client extends Model
     {
         return "/clients/" . $this->id;
     }
+
+    //methods
+    public function canBeDeletedByUser(): bool
+    {
+        return $this->user_id == auth()->user()?->id;
+    }
 }
