@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Client;
-use App\Http\Requests\ClientDestroyRequest;
-use Illuminate\Http\Request;
+
+use function App\Helpers\currentUser;
+
+use App\Http\Requests\Frontend\Client\ClientDestroyRequest;
+use App\Http\Requests\Frontend\Client\ClientStoreRequest;
+
 use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
@@ -32,17 +36,9 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => $client]);
     }
 
-    public function store(Request $request)
+    public function store(ClientStoreRequest $request)
     {
-        //This is very dangerous, no validation implemented. yet...
-        $client = new Client();
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->address = $request->get('address');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
+        $client = currentUser()?->userClients()->create($request->validated());
 
         return $client;
     }
