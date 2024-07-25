@@ -38,8 +38,17 @@
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
-
-                    <template v-if="client.bookings_order_by_newest && client.bookings_order_by_newest.length > 0">
+                    <div class="dropdown my-2">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Filtering
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <span class="dropdown-item" @click="fetchBookings('all')">All bookings</span>
+                            <span class="dropdown-item" @click="fetchBookings('past')">Past bookings</span>
+                            <span class="dropdown-item" @click="fetchBookings('future')">Future bookings</span>
+                        </div>
+                    </div>
+                    <template v-if="bookings && bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +58,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings_order_by_newest" :key="booking.id">
+                                <tr v-for="booking in bookings" :key="booking.id">
                                     <td>{{ booking.time }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,6 +97,7 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            bookings: []
         }
     },
 
@@ -98,7 +108,16 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+        fetchBookings(type){
+            axios.get(`/api/client/${this.client.id}/bookings?type=${type}`).then((res)=>{
+                this.bookings = res.data.data
+            })
         }
+    },
+
+    mounted(){
+        this.bookings = this.client.bookings_order_by_newest
     }
 }
 </script>
