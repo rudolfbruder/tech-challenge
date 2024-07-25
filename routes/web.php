@@ -22,17 +22,17 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+//Could be in separate route file and registered in RouteService Provider
 Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function (): void {
     Route::get('/', 'ClientsController@index')->name('clients.index');
     Route::get('/create', 'ClientsController@create');
     Route::post('/', 'ClientsController@store');
-    Route::get('/{client}', 'ClientsController@show');
-    Route::delete('/{client}', 'ClientsController@destroy');
-
-    Route::get('/{client}/journals', 'JournalsController@index');
-    Route::post('/{client}/journals', 'JournalsController@store');
-    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
-
-
-    Route::get('/{client}/journal/{journal}', [ClientJournalBasicController::class,'show']);
+    Route::group(['middleware' => 'clientIsUsers'], function (): void {
+        Route::middleware('clientIsUsers')->get('/{client}', 'ClientsController@show');
+        Route::middleware('clientIsUsers')->delete('/{client}', 'ClientsController@destroy');
+        Route::get('/{client}/journals', 'JournalsController@index');
+        Route::post('/{client}/journals', 'JournalsController@store');
+        Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+        Route::get('/{client}/journal/{journal}', [ClientJournalBasicController::class,'show']);
+    });
 });

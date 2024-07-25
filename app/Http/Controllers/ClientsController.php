@@ -3,19 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Domain\Clients\Repositories\ClientRepositoryInterface;
 
 use function App\Helpers\currentUser;
 
 use App\Http\Requests\Frontend\Client\ClientDestroyRequest;
 use App\Http\Requests\Frontend\Client\ClientStoreRequest;
 
-use Illuminate\Support\Facades\Auth;
-
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(ClientRepositoryInterface $clientRepository)
     {
-        $clients = Auth::user()->userClients->each->append('bookings_count');
+        $clients = $clientRepository->getUsersClients();
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -27,9 +26,7 @@ class ClientsController extends Controller
 
     public function show(Client $client)
     {
-        if ($client->user->id != currentUser()->id) {
-            abort(403, "You are unauthorized to view this client");
-        }
+        // could also be done as in index method via repository
         $client->load('bookingsOrderByNewest');
         //I would prefer to create an API response and load it via Vue or make logic on FE in vue with moment js or similar package
         //this will do for now
