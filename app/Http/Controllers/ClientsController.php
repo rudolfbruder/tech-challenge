@@ -25,13 +25,15 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::with('bookings')->where('id', $client)->first();
-
+        if ($client->user->id != currentUser()->id) {
+            abort(403, "You are unauthorized to view this client");
+        }
+        $client->load('bookingsOrderByNewest');
         //I would prefer to create an API response and load it via Vue or make logic on FE in vue with moment js or similar package
         //this will do for now
-        $client->bookings->each->append('time');
+        $client->bookingsOrderByNewest->each->append('time');
 
         return view('clients.show', ['client' => $client]);
     }

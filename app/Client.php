@@ -26,6 +26,11 @@ class Client extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function bookingsOrderByNewest()
+    {
+        return $this->hasMany(Booking::class)->orderByDesc('start');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
