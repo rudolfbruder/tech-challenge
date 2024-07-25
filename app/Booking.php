@@ -3,16 +3,14 @@
 namespace App;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    protected $fillable = [
-        'client_id',
-        'start',
-        'end',
-        'notes',
-    ];
+    use HasFactory;
+
+    protected $guarded = [];
 
     protected $dates = [
         'start',
@@ -22,7 +20,7 @@ class Booking extends Model
     public function getTimeAttribute()
     {
         if (Carbon::parse($this->start)->isSameDay(Carbon::parse($this->end))) {
-            return $this->start->format('l d F Y, H:m') . ' to ' . $this->end->format('H:m');
+            return Carbon::parse($this->start)->format('l d F Y, H:m') . ' to ' . Carbon::parse($this->end)->format('H:m');
 
         }
 

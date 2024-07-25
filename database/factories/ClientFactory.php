@@ -1,19 +1,33 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Client;
 use App\User;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Client::class, function (Faker $faker) {
-    return [
-        'user_id' => User::inRandomOrder()->first()?->id,
-        'name' => $faker->name,
-        'email' => $faker->email,
-        'phone' => $faker->phoneNumber,
-        'address' => $faker->streetAddress,
-        'city' => $faker->city,
-        'postcode' => $faker->postcode,
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Client>
+ */
+class ClientFactory extends Factory
+{
+    protected $model = Client::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::inRandomOrder()->first()?->id,
+            'name' => fake()->name,
+            'email' => fake()->email,
+            'phone' => fake()->phoneNumber,
+            'address' => fake()->streetAddress,
+            'city' => fake()->city,
+            'postcode' => fake()->postcode,
+        ];
+    }
+}

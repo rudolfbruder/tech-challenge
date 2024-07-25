@@ -2,22 +2,16 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Client extends Model
 {
-    //I am a fan of setting $guaded to = [] via stub when making a model by artisan
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
-        'city',
-        'postcode',
-    ];
+    use HasFactory;
 
+    protected $guarded = [];
     protected $appends = [
         'url',
     ];
