@@ -24,6 +24,6 @@ class Booking extends Model
 
         }
 
-        return $this->start->format('l d F Y, H:m') . ' to ' . $this->end->format('l d F Y, H:m');
+        return Carbon::parse($this->start)->format('l d F Y, H:m') . ' to ' .  Carbon::parse($this->end)->format('l d F Y, H:m');
     }
 }

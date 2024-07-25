@@ -8,7 +8,7 @@ use App\Client;
 use function App\Helpers\currentUser;
 
 use App\Http\Controllers\Controller;
-
+use App\Http\Requests\Frontend\Client\ClientDestroyRequest;
 use App\Http\Resources\Client\Booking\ClientBookingsResource;
 use Exception;
 
@@ -40,5 +40,12 @@ class ClientBookingController extends Controller
         }
 
         return  ClientBookingsResource::collection($collection);
+    }
+
+    public function destroy(ClientDestroyRequest $request, Client $client, Booking $booking)
+    {
+        $booking->delete();
+
+        return response()->json([], 204);
     }
 }

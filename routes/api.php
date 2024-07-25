@@ -21,6 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('client/{client}/bookings', [ClientBookingController::class,'index']);
+    Route::delete('client/{client}/booking/{booking}', [ClientBookingController::class,'destroy']);
 });
 
 Route::middleware('auth:sanctum')->group(function (): void {

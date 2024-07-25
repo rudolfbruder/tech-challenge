@@ -162,7 +162,11 @@ export default {
         },
 
         deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+            axios.delete(`/api/client/${this.client.id}/booking/${booking.id}`).then((res) => {
+                this.$swalSuccessToast('Booking deleted')
+            }).catch((e) => {
+                this.$swalErrorToast('Oooops, there was a problem')
+            });
         },
         getBookings(type) {
             axios.get(`/api/client/${this.client.id}/bookings?type=${type}`).then((res) => {
@@ -175,7 +179,6 @@ export default {
                 written_at: this.written_at,
                 client_id: this.client.id
             }).then((res) => {
-                console.log(res.data.data);
                 this.$swalSuccessToast('Journal record created')
                 this.getJournals()
                 $('#exampleModal').modal('hide')

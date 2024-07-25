@@ -7,7 +7,6 @@ use App\Domain\Clients\Repositories\ClientRepositoryInterface;
 
 use function App\Helpers\currentUser;
 
-use App\Http\Requests\Frontend\Client\ClientDestroyRequest;
 use App\Http\Requests\Frontend\Client\ClientStoreRequest;
 
 class ClientsController extends Controller
@@ -40,12 +39,5 @@ class ClientsController extends Controller
         $client = currentUser()?->userClients()->create($request->validated());
 
         return $client;
-    }
-
-    public function destroy(ClientDestroyRequest $request, Client $client)
-    {
-        $client->delete();
-
-        return response()->json([], 204);
     }
 }
