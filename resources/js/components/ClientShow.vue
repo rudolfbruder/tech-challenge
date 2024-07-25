@@ -22,7 +22,7 @@
                             </tr>
                             <tr>
                                 <th class="text-gray-600 pr-3">Address</th>
-                                <td>{{ client.address }}<br/>{{ client.postcode + ' ' + client.city }}</td>
+                                <td>{{ client.address }}<br />{{ client.postcode + ' ' + client.city }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -31,21 +31,26 @@
 
             <div class="w-2/3">
                 <div>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
+                    <button class="btn"
+                        :class="{ 'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings' }"
+                        @click="switchTab('bookings')">Bookings</button>
+                    <button class="btn"
+                        :class="{ 'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals' }"
+                        @click="switchTab('journals')">Journals</button>
                 </div>
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
                     <div class="dropdown my-2">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Filtering
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <span class="dropdown-item" @click="fetchBookings('all')">All bookings</span>
-                            <span class="dropdown-item" @click="fetchBookings('past')">Past bookings</span>
-                            <span class="dropdown-item" @click="fetchBookings('future')">Future bookings</span>
+                            <span class="dropdown-item" @click="getBookings('all')">All bookings</span>
+                            <span class="dropdown-item" @click="getBookings('past')">Past bookings</span>
+                            <span class="dropdown-item" @click="getBookings('future')">Future bookings</span>
                         </div>
                     </div>
                     <template v-if="bookings && bookings.length > 0">
@@ -62,7 +67,8 @@
                                     <td>{{ booking.time }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
+                                        <button class="btn btn-danger btn-sm"
+                                            @click="deleteBooking(booking)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -78,13 +84,59 @@
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        New Journal
+                    </button>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">New Journal</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="dateOfJournal">Date of Journal</label>
+                                        <input type="date" v-model="written_at" class="form-control" id="dateOfJournal" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content">Content of the journal</label>
+                                        <textarea class="form-control" v-model="content" id="content" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" @click="submitJournal">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Content</th>
+                            <th>Written at</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="journal in journals" :key="journal.id">
+                            <td>{{ journal.content }}</td>
+                            <td>{{ journal.written_at }}</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm"
+                                    :href="`/clients/${client.id}/journal/${journal.id}`">View</a>
+                                <button class="btn btn-danger btn-sm" @click="deleteJournal(journal.id)">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</template>
+</div></template>
 
 <script>
 import axios from 'axios';
@@ -97,7 +149,10 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
-            bookings: []
+            bookings: [],
+            written_at: "",
+            content: '',
+            journals: []
         }
     },
 
@@ -109,15 +164,41 @@ export default {
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
         },
-        fetchBookings(type){
-            axios.get(`/api/client/${this.client.id}/bookings?type=${type}`).then((res)=>{
+        getBookings(type) {
+            axios.get(`/api/client/${this.client.id}/bookings?type=${type}`).then((res) => {
                 this.bookings = res.data.data
+            })
+        },
+        submitJournal() {
+            axios.post(`/api/client/${this.client.id}/journal`, {
+                content: this.content,
+                written_at: this.written_at,
+                client_id: this.client.id
+            }).then((res) => {
+                console.log(res.data.data);
+                this.$swalSuccessToast('Journal record created')
+                this.getJournals()
+                $('#exampleModal').modal('hide')
+            }).catch((e) => {
+                this.$swalErrorToast('Oooops, there was a problem')
+            })
+        },
+        getJournals() {
+            axios.get(`/api/client/${this.client.id}/journals`).then((res) => {
+                this.journals = res.data.data
+            })
+        },
+        deleteJournal(journalId) {
+            axios.delete(`/api/client/${this.client.id}/journal/${journalId}`).then((res) => {
+                this.$swalSuccessToast('Journal record deleted')
+                this.getJournals()
             })
         }
     },
 
-    mounted(){
+    mounted() {
         this.bookings = this.client.bookings_order_by_newest
+        this.getJournals();
     }
 }
 </script>

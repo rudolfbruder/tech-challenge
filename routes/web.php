@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Client\Journal\ClientJournalBasicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,7 +22,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
+Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function (): void {
     Route::get('/', 'ClientsController@index')->name('clients.index');
     Route::get('/create', 'ClientsController@create');
     Route::post('/', 'ClientsController@store');
@@ -31,4 +32,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
     Route::get('/{client}/journals', 'JournalsController@index');
     Route::post('/{client}/journals', 'JournalsController@store');
     Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+
+
+    Route::get('/{client}/journal/{journal}', [ClientJournalBasicController::class,'show']);
 });

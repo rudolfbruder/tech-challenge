@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Client\Bookings\ClientBookingController;
+use App\Http\Controllers\Client\Journal\ClientJournalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('client/{client}/bookings', [ClientBookingController::class,'index']);
+});
+
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('client/{client}/journals', [ClientJournalController::class,'index']);
+    Route::post('client/{client}/journal', [ClientJournalController::class,'store']);
+    Route::delete('client/{client}/journal/{journal}', [ClientJournalController::class,'destroy']);
 });
